@@ -1,0 +1,80 @@
+#include <LiquidCrystal.h>
+
+// initialize the LCD library with the numbers of the interface pins
+LiquidCrystal lcd(22,23,24,25,26,27); //RS,E,DATA PINS L-R,
+
+// define the countdown time in seconds
+bool countdown = true;
+int countdownTime = 15;
+int buzzerpin = 28;
+
+void setup() {
+  // set up the number of columns and rows on the LCD screen
+  // set up buzzer output
+  lcd.begin(16, 2);
+  pinMode(buzzerpin, OUTPUT);
+
+  // print the initial countdown time on the LCD screen
+  lcd.print("Countdown: ");
+  lcd.print(countdownTime);
+  lcd.print("s");
+}
+
+void loop() {
+  // decrease the countdown time by 1 every second
+  while (countdown == true){
+    countdownTime--;
+    // if the countdown time reaches 0, print "Time's up!" on the LCD screen
+   
+    if (countdownTime == 0) {
+      lcd.clear();
+      digitalWrite(buzzerpin, HIGH);
+      lcd.print("Time's up!");
+      delay(1000);
+      digitalWrite(buzzerpin, LOW);
+      delay(1000);
+      lcd.clear();
+      digitalWrite(buzzerpin, HIGH);
+      delay(1000);
+      digitalWrite(buzzerpin, LOW);
+      lcd.print(" BOMB DETONATED");
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("                  ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("               ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("                  ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("                  ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(3000);
+      lcd.clear();
+      countdown = false;
+  }
+  // otherwise, print the remaining countdown time on the LCD screen
+  else {
+    lcd.setCursor(0, 1);
+    lcd.print("-------");
+    lcd.print(countdownTime);
+    lcd.print("--------");
+    delay(1000);    
+    }
+  }
+}
