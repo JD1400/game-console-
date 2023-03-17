@@ -1,9 +1,19 @@
+#include LiquidCrystal.h
+
+bool countdown = true;
+int countdownTime = 15;
+int buzzerpin = 28;
 
 void setup(){
+  // lcd setup
+  lcd.begin(16, 2);
+  pinMode(buzzerpin, OUTPUT);
+  
   pinMode(38, INPUT);
   pinMode(39, INPUT);
   pinMode(40, INPUT);
   pinMode(41, INPUT);
+  
 }
 
 
