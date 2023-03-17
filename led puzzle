@@ -16,13 +16,14 @@ const int ledPin1 = 10;
 const int ledPin2 = 11;
 const int ledPin3 = 12;
 const int ledPin4 = 13;
-const int ledPin5 = A0;
-const int ledPin6 = A1;
-const int ledPin7 = A2;
-const int ledPin8 = A3;
+const int ledPin5 = A1;
+const int ledPin6 = A2;
+const int ledPin7 = A3;
+const int ledPin8 = A4;
 
 const int ledPins[] = {ledPin1, ledPin2, ledPin3, ledPin4, ledPin5, ledPin6, ledPin7, ledPin8};
 const int numLeds = sizeof(ledPins) / sizeof(ledPins[0]);
+randomSeed(analogRead(0));
 
 void setup() {
   Serial.begin(9600);
