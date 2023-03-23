@@ -1,23 +1,87 @@
+//variables for tft screen
+
+//variables for countdown timer
 #include LiquidCrystal.h
 
 bool countdown = true;
 int countdownTime = 15;
 int buzzerpin = 28;
 
+//variables for decodePuzzle
+
+//variables for lightPuzzle
+
+//variables for arrowPuzzle
+
+//variables for joystick
+
+//variables for switching screens and such
+bool startScreen = true;
+bool gameScreen = false;
+bool badEndScreen = false;
+bool goodEndScreen = false;
+
+//setup
 void setup(){
   // lcd setup
   lcd.begin(16, 2);
   pinMode(buzzerpin, OUTPUT);
   
+  //pins for buttons
   pinMode(38, INPUT);
   pinMode(39, INPUT);
   pinMode(40, INPUT);
   pinMode(41, INPUT);
   
-}
+  //pins for tft screen
+  
+  //pins for lcd display
+  
+  //pins for LEDS
+  
+  //pins for buzzers
+  
+  //pins for joystick
+  
+  
+}//end setup
 
-
+//loop
 void loop(){
 
-}
+}//end loop
 
+//startscreen
+void startScreen(){
+
+}//endstartscreen
+
+//gameScreen
+void gameScreen(){
+
+}//end gamescreen
+
+//badENdScreen
+void badEndScreen(){
+
+}//end badEndScreen
+
+//good end screen
+void goodEndScreen(){
+
+}//end goodEndScreen
+
+//decodePuzzle
+void decodePuzzle(){
+
+}//end decode
+
+//lightPuzzle
+void lightPuzzle(){
+
+}//endlightPuzzle
+
+//arrowPuzzle
+void arrowPuzzle(){
+
+}//endArrowPuzzle
