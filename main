@@ -24,6 +24,20 @@ int buzzerpin = 28;
 //variables for lightPuzzle
 
 //variables for arrowPuzzle
+bool selectColour = true;
+bool selectSerialNumber = true;
+bool wireGen = true;
+bool randomNumGenerate = true;
+bool UPdownPuzzleSolve = false;
+int randomNumber;
+int arrowCode[6]; //UP == 1, DOWN == 2, LEFT == 3, RIGHT == 4
+int arrowCodeEnter[6];
+int arrowCodeIndex = 0;
+int numWires;
+int buttonPin = 38;     // the number of the button pin
+int buttonPin2 = 39;
+int buttonPin3 = 40;
+int buttonPin4 = 41;
 int buttonState = 0;   // current state of the button
 int buttonState2 = 0;
 int buttonState3 = 0;
@@ -49,10 +63,10 @@ void setup(){
   pinMode(buzzerpin, OUTPUT);
   
   //pins for buttons
-  pinMode(38, INPUT);
-  pinMode(39, INPUT);
-  pinMode(40, INPUT);
-  pinMode(41, INPUT);
+  pinMode(buttonPin, INPUT);
+  pinMode(buttonPin2, INPUT);
+  pinMode(buttonPin3, INPUT);
+  pinMode(buttonPin4, INPUT);
   
   //pins for tft screen
   
@@ -76,7 +90,7 @@ void loop(){
 //////////////////////////////////////
 //startscreen
 void startScreen(){
-    tft.fillScreen(BLACK);
+   tft.fillScreen(BLACK);
   
   //Easy button
   tft.drawRoundRect(width/2.5, 100, width/1.5, height/8, 5, WHITE);
@@ -108,7 +122,12 @@ void startScreen(){
 //////////////////////////////////////
 //gameScreen
 void gameScreen(){
-
+  numWires = random(0,4);
+  int wireXPos = 20;
+  for(int i = 0; i < numWires; i++){
+    tft.fillRect(wireXPos, 30, 15, 50, BLUE);
+    wireXPos += 25;
+  }//end for
 }//end gamescreen
 
 //////////////////////////////////////
