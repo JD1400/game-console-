@@ -20,6 +20,8 @@ const int ledPin5 = A1;
 const int ledPin6 = A2;
 const int ledPin7 = A3;
 const int ledPin8 = A4;
+const int ledPin9 = A5;
+const int ledPin10 = A6;
 
 const int ledPins[] = {ledPin1, ledPin2, ledPin3, ledPin4, ledPin5, ledPin6, ledPin7, ledPin8};
 const int numLeds = sizeof(ledPins) / sizeof(ledPins[0]);
@@ -36,13 +38,13 @@ void setup() {
 
 void loop() {
   // Turn on a random number of LEDs
-  int numLedsOn = random(0, 9);
+  int numLedsOn = random(0,11);
   for (int i = 0; i < numLeds; i++) {
     digitalWrite(ledPins[i], i < numLedsOn);
   }
   
-  // Wait for 2 seconds
-  delay(2000);
+  // Wait for 5 seconds
+  delay(5000);
   
   // Turn off all LEDs
   for (int i = 0; i < numLeds; i++) {
@@ -77,6 +79,12 @@ void loop() {
     case 6:
       expectedCode = "D42";
       break;
+    case 7:
+      expectedCode = "A32";
+      break;
+    case 8:
+      expectedCode = "B44";
+      break;
     default:
       expectedCode = "200";
   }
@@ -88,3 +96,4 @@ void loop() {
     Serial.println("Code incorrect.");
   }
 }
+
