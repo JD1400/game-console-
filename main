@@ -177,6 +177,70 @@ void goodEndScreen(){
 }//end goodEndScreen
 
 //////////////////////////////////////
+//COUNTDOWN
+void COUNTDOWN(){
+  void loop() {
+  
+  // print the initial countdown time on the LCD screen
+  lcd.print("Countdown: ");
+  lcd.print(countdownTime - 1);
+  lcd.print("s");
+  
+  // decrease the countdown time by 1 every second
+  while (countdown == true){
+    countdownTime--;
+    // if the countdown time reaches 0, print "Time's up!" on the LCD screen
+   
+    if (countdownTime == 0) {
+      lcd.clear();
+      //digitalWrite(buzzerpin, HIGH);
+      lcd.print("Time's up!");
+      delay(1000);
+      //digitalWrite(buzzerpin, LOW);
+      delay(1000);
+      lcd.clear();
+      //digitalWrite(buzzerpin, HIGH);
+      delay(1000);
+      //digitalWrite(buzzerpin, LOW);
+      lcd.print(" BOMB DETONATED");
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("                  ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("               ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("                  ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("       :(");
+      delay(3000);
+      lcd.clear();
+      countdown = false;
+  }
+  // otherwise, print the remaining countdown time on the LCD screen
+  else {
+    lcd.setCursor(0, 1);
+    lcd.print("-------");
+    lcd.print(countdownTime);
+    lcd.print("--------");
+    delay(1000);    
+    }
+  }
+}
+
+}//end countdown
+
+//////////////////////////////////////
 //decodePuzzle
 void decodePuzzle(){
 
