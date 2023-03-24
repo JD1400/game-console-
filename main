@@ -12,6 +12,14 @@ int buzzerpin = 28;
 //variables for lightPuzzle
 
 //variables for arrowPuzzle
+int buttonState = 0;   // current state of the button
+int buttonState2 = 0;
+int buttonState3 = 0;
+int buttonState4 = 0;
+int lastButtonState = 0;  // previous state of the button
+int lastButtonState2 = 0;
+int lastButtonState3 = 0;
+int lastButtonState4 = 0;
 
 //variables for joystick
 
