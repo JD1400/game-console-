@@ -1,4 +1,16 @@
 //variables for tft screen
+#include <TFT_eSPI.h>
+TFT_eSPI tft = TFT_eSPI();
+#define BLACK 0x0000
+#define BLUE 0x001F
+#define RED 0xF800
+#define GREEN 0x07E0
+#define CYAN 0x07FF
+#define MAGENTA 0xF81F
+#define YELLOW 0xFFE0
+#define WHITE 0xFFFF
+float width = tft.width();
+float height = tft.height();
 
 //variables for countdown timer
 #include LiquidCrystal.h
@@ -64,7 +76,33 @@ void loop(){
 //////////////////////////////////////
 //startscreen
 void startScreen(){
+    tft.fillScreen(BLACK);
+  
+  //Easy button
+  tft.drawRoundRect(width/2.5, 100, width/1.5, height/8, 5, WHITE);
+  tft.setCursor(width/1.6, 115);
+  tft.setTextColor(RED);
+  tft.setTextSize(3);
+  tft.println("Easy");
 
+  //Medium button
+  tft.drawRoundRect(width/2.5, 170, width/1.5, height/8, 5, WHITE);
+  tft.setCursor(width/1.75, 185);
+  tft.setTextColor(RED);
+  tft.setTextSize(3);
+  tft.println("Medium");
+
+  //Hard button
+  tft.drawRoundRect(width/2.5, 240, width/1.5, height/8, 5, WHITE);
+  tft.setCursor(width/1.6, 260);
+  tft.setTextColor(RED);
+  tft.setTextSize(3);
+  tft.println("Hard");
+
+  tft.setCursor(width/15, height/16);
+  tft.setTextColor(BLACK, RED);
+  tft.setTextSize(10);
+  tft.println("NOT A BOMB");
 }//endstartscreen
 
 //////////////////////////////////////
