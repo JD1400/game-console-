@@ -186,7 +186,7 @@ void decodePuzzle(){
 //lightPuzzle
 void lightPuzzle(){
 // Turn on a random number of LEDs
-  int numLedsOn = random(0,11);
+  int numLedsOn = random(0,9);
   for (int i = 0; i < numLeds; i++) {
     digitalWrite(ledPins[i], i < numLedsOn);
   }
