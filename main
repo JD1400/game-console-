@@ -12,6 +12,15 @@ TFT_eSPI tft = TFT_eSPI();
 float width = tft.width();
 float height = tft.height();
 
+//variables for startscreen
+bool setup123 = true;
+
+//variables for goodEndScreen
+bool goodEndSetup = true;
+
+//variables for badEndScreen
+bool badEndSetup = true;
+
 //variables for countdown timer
 #include LiquidCrystal.h
 
@@ -76,6 +85,11 @@ int lastButtonState3 = 0;
 int lastButtonState4 = 0;
 
 //variables for joystick
+#define JOYSTICK_X_PIN A7
+#define JOYSTICK_Y_PIN A8
+#define JOYSTICK_BUTTON_PIN 34
+float cursorX = 240.0;
+float cursorY = 160.0;
 
 //variables for switching screens and such
 bool startScreen = true;
@@ -111,69 +125,180 @@ void setup(){
   //pins for buzzers
   
   //pins for joystick
-  
+  pinMode(JOYSTICK_BUTTON_PIN, INPUT);
+  digitalWrite(JOYSTICK_BUTTON_PIN, HIGH);
   
 }//end setup
 
 //////////////////////////////////////
 //loop
 void loop(){
-
+  if (startScreen){
+    startScreen();
+  } else if (gameScreen){
+    gameScreen();
+    COUNTDOWN();
+  } else if (goodEndScreen){
+    goodEndScreen();
+  } else if (badEndScreen){
+    badEndScreen();
+  }
 }//end loop
 
 //////////////////////////////////////
 //startscreen
 void startScreen(){
-   tft.fillScreen(BLACK);
-  
-  //Easy button
-  tft.drawRoundRect(width/2.5, 100, width/1.5, height/8, 5, WHITE);
-  tft.setCursor(width/1.6, 115);
-  tft.setTextColor(RED);
-  tft.setTextSize(3);
-  tft.println("Easy");
+  if (setup123){
+    tft.fillScreen(BLACK);
 
-  //Medium button
-  tft.drawRoundRect(width/2.5, 170, width/1.5, height/8, 5, WHITE);
-  tft.setCursor(width/1.75, 185);
-  tft.setTextColor(RED);
-  tft.setTextSize(3);
-  tft.println("Medium");
+    //Easy button
+    tft.drawRoundRect(150, 100, 200, 50, 5, WHITE);
+    tft.setCursor(220, 115);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Easy");
 
-  //Hard button
-  tft.drawRoundRect(width/2.5, 240, width/1.5, height/8, 5, WHITE);
-  tft.setCursor(width/1.6, 260);
-  tft.setTextColor(RED);
-  tft.setTextSize(3);
-  tft.println("Hard");
+    //Medium button
+    tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+    tft.setCursor(205, 185);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Medium");
 
-  tft.setCursor(width/15, height/16);
-  tft.setTextColor(BLACK, RED);
-  tft.setTextSize(10);
-  tft.println("NOT A BOMB");
+    //Hard button
+    tft.drawRoundRect(150, 240, 200, 50, 5, WHITE);
+    tft.setCursor(215, 255);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Hard");
+
+    tft.setCursor(30, 20);
+    tft.setTextColor(BLACK, RED);
+    tft.setTextSize(10);
+    tft.println("NOT A BOMB");
+    
+    setup123 = false;
+  }
+
+  // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
+  float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
+  float JoyStickY = map(analogRead(JOYSTICK_Y_PIN), 0, 1023, -1000, 1000)/20000.0;
+
+  // Update cursor position
+  cursorY = cursorY + JoyStickY;
+  cursorX = cursorX + JoyStickX;
+
+  // Limit the cursor to the bounds of the screen
+  cursorX = constrain(cursorX, 0,480);
+  cursorY = constrain(cursorY, 0,320);
+
+  // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
+  if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 100 && cursorY <= 150) {
+    startScreen = false;
+    gameScreen = true;
+  } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
+    startScreen = false;
+    gameScreen = true;
+  } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 240 && cursorY <= 290) {
+    startScreen = false;
+    gameScreen = true;
+  }
+
+
+  // Finally, draw a pixel where the cursor currently is 
+  tft.drawPixel(int(cursorX), int(cursorY), WHITE);
 }//endstartscreen
 
 //////////////////////////////////////
 //gameScreen
 void gameScreen(){
-  numWires = random(0,4);
-  int wireXPos = 20;
-  for(int i = 0; i < numWires; i++){
-    tft.fillRect(wireXPos, 30, 15, 50, BLUE);
-    wireXPos += 25;
-  }//end for
+
 }//end gamescreen
 
 //////////////////////////////////////
 //badEndScreen
 void badEndScreen(){
+  if (badEndSetup){
+    tft.fillScreen(BLACK);
 
+    tft.setCursor(30, 100);
+    tft.setTextColor(BLACK, RED);
+    tft.setTextSize(5);
+    tft.println("YOU LOSE!(OOF)");
+
+    tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+    tft.setCursor(220, 180);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Home");
+
+    badEndSetup = false;
+  }
+
+  // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
+  float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
+  float JoyStickY = map(analogRead(JOYSTICK_Y_PIN), 0, 1023, -1000, 1000)/20000.0;
+
+  // Update cursor position
+  cursorY = cursorY + JoyStickY;
+  cursorX = cursorX + JoyStickX;
+
+  // Limit the cursor to the bounds of the screen
+  cursorX = constrain(cursorX, 0,480);
+  cursorY = constrain(cursorY, 0,320);
+
+  // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
+  if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
+    badEndScreen = false;
+    startScreen = true;
+    setup123 = true;
+  }
+  
+  // Finally, draw a pixel where the cursor currently is 
+  tft.drawPixel(int(cursorX), int(cursorY), WHITE);
 }//end badEndScreen
 
 //////////////////////////////////////
 //good end screen
 void goodEndScreen(){
+  if (goodEndSetup){
+    tft.fillScreen(BLACK);
 
+    tft.setCursor(0, 100);
+    tft.setTextColor(BLACK, RED);
+    tft.setTextSize(5);
+    tft.println("YOU WIN!(HOORAY)");
+
+    tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+    tft.setCursor(220, 180);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Home");
+
+    goodEndSetup = false;
+  }
+
+  // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
+  float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
+  float JoyStickY = map(analogRead(JOYSTICK_Y_PIN), 0, 1023, -1000, 1000)/20000.0;
+
+  // Update cursor position
+  cursorY = cursorY + JoyStickY;
+  cursorX = cursorX + JoyStickX;
+
+  // Limit the cursor to the bounds of the screen
+  cursorX = constrain(cursorX, 0,480);
+  cursorY = constrain(cursorY, 0,320);
+
+  // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
+  if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
+    goodEndScreen = false;
+    startScreen = true;
+    setup123 = true;
+  }
+
+  // Finally, draw a pixel where the cursor currently is 
+  tft.drawPixel(int(cursorX), int(cursorY), WHITE);
 }//end goodEndScreen
 
 //////////////////////////////////////
