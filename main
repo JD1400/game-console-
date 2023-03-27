@@ -257,6 +257,14 @@ void gameScreen(){
       tft.fillRect(wireXPos, 45, 15, 130, RED);
       wireXPos += 25;
     }
+    
+    tft.setCursor(70,227);
+    tft.setTextSize(16);
+    tft.print(randomNum1);
+    tft.setCursor(125,227);
+    tft.print(randomNum2);
+    tft.setCursor(180,227);
+    tft.print(randomNum3);
  
     //button
     randomSeed(analogRead(A15));
