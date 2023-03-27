@@ -83,6 +83,14 @@ int lastButtonState = 0;  // previous state of the button
 int lastButtonState2 = 0;
 int lastButtonState3 = 0;
 int lastButtonState4 = 0;
+int wirenum;
+int randomNum1;
+int randomNum2;
+int randomNum3;
+int realNum1;
+int realNum2;
+int realNum3;
+
 
 //variables for joystick
 #define JOYSTICK_X_PIN A7
@@ -120,6 +128,16 @@ void setup(){
   // Set up LED pins as outputs
   for (int i = 0; i < numLeds; i++) {
     pinMode(ledPins[i], OUTPUT);
+    
+  randomSeed(analogRead(A15));
+  randomNum1 = (random(6));
+  randomNum2 = (random(7));
+  randomNum3 = (random(7));
+  wirenum = random(1,4);
+
+  realNum1 = (randomNum1 + wirenum);
+  realNum2 = (randomNum2 + wirenum);
+  realNum3 = (randomNum3 + wirenum);
   }
   
   //pins for buzzers
@@ -212,6 +230,25 @@ void startScreen(){
 //////////////////////////////////////
 //gameScreen
 void gameScreen(){
+  tft.fillScreen(BLACK);
+
+  tft.drawRect(50,25,100,25,TFT_WHITE);
+  tft.fillRect(50,25,100,25,TFT_WHITE);
+
+  tft.drawRect(50,170,100,25,TFT_WHITE);
+  tft.fillRect(50,170,100,25,TFT_WHITE);
+
+  tft.drawRect(50,210,200,100,TFT_DARKGREY);
+  tft.fillRect(50,210,10,100, TFT_DARKGREY);
+  tft.fillRect(50,210,200,10,TFT_DARKGREY);
+  tft.fillRect(240,210,10,100, TFT_DARKGREY);
+  tft.fillRect(50,300,200,10,TFT_DARKGREY);
+  
+  int wireXPos = 67;
+  for(int i = 0; i < wirenum; i++){
+    tft.fillRect(wireXPos, 45, 15, 130, RED);
+    wireXPos += 25;
+    }
 
 }//end gamescreen
 
@@ -366,9 +403,45 @@ void COUNTDOWN(){
 }//end countdown
 
 //////////////////////////////////////
-//decodePuzzle
-void decodePuzzle(){
-
+//SerialnumPuzzle
+void SerialnumPuzzle(){
+  char key = keypad.getKey();
+  static int index = 0;
+  static char input[3];
+  
+    if (key) {
+    if (key == '#') {
+      if (input[0] == '0' && index == 1) {
+        Serial.println("Invalid input");
+        index = 0;
+        input[0] = '\0';
+        return;
+      }
+      int inputNum1 = input[0] - '0';
+      int inputNum2 = input[1] - '0';
+      int inputNum3 = input[2] - '0';
+      if (inputNum1 == realNum1 && inputNum2 == realNum2 && inputNum3 == realNum3) {
+        Serial.println("Success!");
+        tft.setTextColor(TFT_YELLOW);
+        tft.setTextSize(2);
+        tft.drawString("CORRECT!!",150,150);
+      } else {
+        Serial.println("Incorrect input.");
+        tft.setTextColor(TFT_YELLOW);
+        tft.setTextSize(2);
+        tft.drawString("INCORRECT!!",150,150);
+      }
+      index = 0;
+      input[0] = '\0';
+    } else if (key == '*') {
+      Serial.println("Input cleared.");
+      index = 0;
+      input[0] = '\0';
+    } else if (index < 3 && key >= '0' && key <= '9') {
+      input[index] = key;
+      index++;
+    }
+  }
 }//end decode
 
 //////////////////////////////////////
