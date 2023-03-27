@@ -83,6 +83,8 @@ int lastButtonState = 0;  // previous state of the button
 int lastButtonState2 = 0;
 int lastButtonState3 = 0;
 int lastButtonState4 = 0;
+
+//variables for serial number and decode puzzle
 int wirenum;
 int randomNum1;
 int randomNum2;
@@ -245,11 +247,12 @@ void gameScreen(){
     randomNum2 = (random(7));
     randomNum3 = (random(7));
 
+    wirenum = random(1,4);
+
     realNum1 = (randomNum1 + wirenum);
     realNum2 = (randomNum2 + wirenum);
     realNum3 = (randomNum3 + wirenum);
     
-    wirenum = random(1,4);
     //wires
     int wireXPos = 67;
     for(int i = 0; i < wirenum; i++){
