@@ -63,14 +63,12 @@ randomSeed(analogRead(0));
 //variables for arrowPuzzle
 bool selectColour = true;
 bool selectSerialNumber = true;
-bool wireGen = true;
 bool randomNumGenerate = true;
 bool UPdownPuzzleSolve = false;
 int randomNumber;
 int arrowCode[6]; //UP == 1, DOWN == 2, LEFT == 3, RIGHT == 4
 int arrowCodeEnter[6];
 int arrowCodeIndex = 0;
-int numWires;
 int buttonPin = 38;     // the number of the button pin
 int buttonPin2 = 39;
 int buttonPin3 = 40;
@@ -259,15 +257,11 @@ void gameScreen(){
       tft.fillRect(wireXPos, 45, 15, 130, RED);
       wireXPos += 25;
     }
-    
+ 
     //button
     randomSeed(analogRead(A15));
     randomNumber = random(0,6);//selects a random number and depending on the one chosen, a colour for the
                                //button is selected.
-    
-    Serial.print("Random Number: ");
-    Serial.print(randomNumber);
-    Serial.println();
 
     //if statement that creates the button and generates the corresponding code
     if(randomNumber == 0){
@@ -319,7 +313,26 @@ void gameScreen(){
       //arrowCode[0] = 1;
       //arrowCode[1] = 4;
     }
-
+    
+    //This generates the code the user needs to solve depending on the number of wires
+    if (numWires == 0){
+      arrowCode[2] = 4;
+      arrowCode[3] = 3;
+      arrowCode[4] = 1;
+    } else if (numWires == 1){
+      arrowCode[2] = 3;
+      arrowCode[3] = 3;
+      arrowCode[4] = 1;
+    } else if (numWires == 2){
+      arrowCode[2] = 4;
+      arrowCode[3] = 3;
+      arrowCode[4] = 2;
+    } else if (numWires == 3){
+      arrowCode[2] = 1;
+      arrowCode[3] = 1;
+      arrowCode[4] = 2;
+    }//end if else statement
+    
     selectColour = false;
   }//end select colour loop
 
@@ -583,41 +596,6 @@ void lightPuzzle(){
 //////////////////////////////////////
 //arrowPuzzle
 void arrowPuzzle(){
-//code for selecting the button colour
-
-  //Generating number of wires
-  if(wireGen){
-    //This generates the number of wires and prints them to the tft screen
-    numWires = random(0,4);
-    //int wireXPos = 20;
-    //for(int i = 0; i < numWires; i++){
-     // tft.fillRect(wireXPos, 30, 15, 50, BLUE);
-     // wireXPos += 25;
-    //}//end for
-    Serial.print("Number of wires: ");
-    Serial.print(numWires);
-    //This generates the code the user needs to solve depending on the number of wires
-    if (numWires == 0){
-      arrowCode[2] = 4;
-      arrowCode[3] = 3;
-      arrowCode[4] = 1;
-    } else if (numWires == 1){
-      arrowCode[2] = 3;
-      arrowCode[3] = 3;
-      arrowCode[4] = 1;
-    } else if (numWires == 2){
-      arrowCode[2] = 4;
-      arrowCode[3] = 3;
-      arrowCode[4] = 2;
-    } else if (numWires == 3){
-      arrowCode[2] = 1;
-      arrowCode[3] = 1;
-      arrowCode[4] = 2;
-    }//end if else statement
-  
-    wireGen = false;
-  }//end wireGen
-
   //This is the serial number puzzle solving corresponder thing
   for(int i = 0; i < sizeof(serialNumber); i++){
     if (serialNumber[i] == 0){
