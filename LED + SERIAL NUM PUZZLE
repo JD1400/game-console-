@@ -1,0 +1,399 @@
+#include <TFT_eSPI.h>
+
+
+//create the screen variable from the library
+TFT_eSPI tft = TFT_eSPI();
+
+
+
+
+// Setting the joystick pins here so we can easily change them
+
+
+
+// Define colours in 4-digit hex                                  
+#define BLACK 0x0000
+#define BLUE 0x001F
+
+#define RED 0xF800
+#define GREEN 0x07E0
+#define CYAN 0x07FF
+#define MAGENTA 0xF81F
+#define YELLOW 0xFFE0
+#define WHITE 0xFFFF
+
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+int wirenum;
+int randomNum1;
+int randomNum2;
+int randomNum3;
+int realNum1;
+int realNum2;
+int realNum3;
+int wirecolornum;
+int itvar;
+int itvar2;
+char wirecolor;
+const int ledPin1 = 10;
+const int ledPin2 = 11;
+const int ledPin3 = 12;
+const int ledPin4 = 13;
+const int ledPin5 = A1;
+const int ledPin6 = A2;
+const int ledPin7 = A3;
+const int ledPin8 = A4;
+const int ledPin9 = A5;
+const int ledPin10 = A6;
+const int ledPins[] = {ledPin1, ledPin2, ledPin3, ledPin4, ledPin5, ledPin6, ledPin7, ledPin8,ledPin9,ledPin10};
+const int numLeds = sizeof(ledPins) / sizeof(ledPins[0]);
+
+bool sernumpuzbool = true;
+bool ledpuzbool = true;
+bool iter;
+bool startScreenbool = false;
+bool arrpuzbool = true;
+
+//variables for joystick
+#define JOYSTICK_X_PIN A7
+#define JOYSTICK_Y_PIN A8
+#define JOYSTICK_BUTTON_PIN 34
+float cursorX = 240.0;
+float cursorY = 160.0;
+
+//variables for arrowPuzzle
+bool selectColour = true;
+bool selectSerialNumber = true;
+bool randomNumGenerate = true;
+bool UPdownPuzzleSolve = false;
+int randomNumber;
+int arrowCode[6]; //UP == 1, DOWN == 2, LEFT == 3, RIGHT == 4
+int arrowCodeEnter[6];
+int arrowCodeIndex = 0;
+int buttonPin = 38;     // the number of the button pin
+int buttonPin2 = 39;
+int buttonPin3 = 40;
+int buttonPin4 = 41;
+int buttonState = 0;   // current state of the button
+int buttonState2 = 0;
+int buttonState3 = 0;
+int buttonState4 = 0;
+int lastButtonState = 0;  // previous state of the button
+int lastButtonState2 = 0;
+int lastButtonState3 = 0;
+int lastButtonState4 = 0;
+
+
+void setup() {
+  Serial.begin(9600);
+  randomSeed(analogRead(A10));
+  randomNum1 = (random(6));
+  randomNum2 = (random(7));
+  randomNum3 = (random(7));
+  wirenum = random(1,4);
+
+  realNum1 = (randomNum1 + wirenum);
+  realNum2 = (randomNum2 + wirenum);
+  realNum3 = (randomNum3 + wirenum);
+
+
+
+  Serial.print("Code: ");
+  Serial.print(randomNum1);
+  
+  Serial.print(randomNum2);
+  
+  Serial.println(randomNum3);
+  Serial.println(wirenum);
+  Serial.print(realNum1);
+  Serial.print(realNum2);
+  Serial.println(realNum3); 
+  tft.begin();
+  tft.setRotation(1);
+  
+  itvar = 0;
+  itvar2 = 0;
+  iter = true;
+   // Set up LED pins as outputs
+  for (int i = 0; i < numLeds; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
+
+  pinMode(JOYSTICK_BUTTON_PIN, INPUT);
+  digitalWrite(JOYSTICK_BUTTON_PIN, HIGH );
+}
+
+bool startScreen(){
+
+  while (true){
+  // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
+  float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
+  float JoyStickY = map(analogRead(JOYSTICK_Y_PIN), 0, 1023, -1000, 1000)/20000.0;
+
+  // Update cursor position
+  cursorY = cursorY + JoyStickY;
+  cursorX = cursorX + JoyStickX;
+
+  // Limit the cursor to the bounds of the screen
+  cursorX = constrain(cursorX, 0,480);
+  cursorY = constrain(cursorY, 0,320);
+
+  // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
+  if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 100 && cursorY <= 150) {
+    return startScreenbool = true;
+    break;
+  } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
+    return startScreenbool = true;
+    break;
+  } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 240 && cursorY <= 290) {
+    return startScreenbool = true;
+    break;
+  }//end else if
+
+  // Finally, draw a pixel where the cursor currently is 
+  tft.drawPixel(int(cursorX), int(cursorY), WHITE);
+  }
+}//endstartscreen
+
+void GOODENDSCREEN(){
+  tft.setTextColor(TFT_YELLOW);
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextSize(5);
+  tft.setCursor(260,220);
+  tft.print("GOOD JOB");
+}
+
+void BADENDSCREEN(){
+  tft.setTextColor(TFT_YELLOW);
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextSize(5);
+  tft.setCursor(270,220);
+  tft.print("DUMMM");
+}
+
+
+void loop() {
+    tft.fillScreen(BLACK);
+
+    //Easy button
+    tft.drawRoundRect(150, 100, 200, 50, 5, WHITE);
+    tft.setCursor(220, 115);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Easy");
+
+    //Medium button
+    tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+    tft.setCursor(205, 185);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Medium");
+
+    //Hard button
+    tft.drawRoundRect(150, 240, 200, 50, 5, WHITE);
+    tft.setCursor(215, 255);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Hard");
+
+    tft.setCursor(30, 20);
+    tft.setTextColor(BLACK, RED);
+    tft.setTextSize(10);
+    tft.println("NOT A BOMB");
+
+  while (true){
+    startScreen();
+    if (startScreenbool == true){
+      break;
+    }    
+  }
+
+  SERNUMPUZ();
+  if (sernumpuzbool==true){
+    tft.fillRect(270,250,200,60,TFT_WHITE);
+    LEDPUZ();
+    if (ledpuzbool==true){
+        GOODENDSCREEN();
+      } else{
+        BADENDSCREEN();
+      }
+    } else {
+      BADENDSCREEN();
+    }
+}
+
+
+bool SERNUMPUZ(){
+
+  tft.fillScreen(BLACK);
+
+  tft.drawRect(50,25,100,25,TFT_WHITE);
+  tft.fillRect(50,25,100,25,TFT_WHITE);
+
+  tft.drawRect(50,170,100,25,TFT_WHITE);
+  tft.fillRect(50,170,100,25,TFT_WHITE);
+
+  tft.drawRect(50,210,200,100,TFT_DARKGREY);
+  tft.fillRect(50,210,10,100, TFT_DARKGREY);
+  tft.fillRect(50,210,200,10,TFT_DARKGREY);
+  tft.fillRect(240,210,10,100, TFT_DARKGREY);
+  tft.fillRect(50,300,200,10,TFT_DARKGREY);
+  tft.drawRect(270,250,200,60,TFT_WHITE);
+  tft.fillRect(270,250,200,60,TFT_WHITE);
+  tft.setTextColor(TFT_YELLOW);
+  tft.setTextSize(3);
+  tft.setCursor(270,220);
+  tft.print("INPUT:");
+  tft.setTextColor(TFT_WHITE);
+  tft.setCursor(70,227);
+  tft.setTextSize(16);
+  tft.print(randomNum1);
+  tft.setCursor(125,227);
+  tft.print(randomNum2);
+  tft.setCursor(180,227);
+  tft.print(randomNum3);
+
+  int wireXPos = 67;
+  for(int i = 0; i < wirenum; i++){
+    tft.fillRect(wireXPos, 45, 15, 130, RED);
+    wireXPos += 25;
+    }
+  
+  while (iter){
+  char key = keypad.getKey();
+  static int index = 0;
+  static char input[3];
+
+  if (key) {
+    if (key == '#') {
+      if (input[0] == '0' && index == 1) {
+        Serial.println("Invalid input");
+        index = 0;
+        input[0] = '\0';
+        return;
+      }
+      int inputNum1 = input[0] - '0';
+      int inputNum2 = input[1] - '0';
+      int inputNum3 = input[2] - '0';
+      if (inputNum1 == realNum1 && inputNum2 == realNum2 && inputNum3 == realNum3) {
+        Serial.println("Success!");
+        tft.setTextColor(TFT_YELLOW);
+        tft.setTextSize(2);
+        tft.drawString("CORRECT!!",150,150);
+        return sernumpuzbool = true;
+        break;
+      } else {
+        Serial.println("Incorrect input.");
+        return sernumpuzbool = false;
+        break;
+        tft.setTextColor(TFT_YELLOW);
+        tft.setTextSize(2);
+        tft.drawString("INCORRECT!!",150,150);
+      }
+      index = 0;
+      input[0] = '\0';
+    } else if (key == '*') {
+      Serial.println("Input cleared.");
+      index = 0;
+      input[0] = '\0';
+      input[1] = '\0';
+      input[2] = '\0';
+      tft.fillRect(270,250,200,60,TFT_WHITE);
+      itvar = 0;
+    } else if (index < 3 && key >= '0' && key <= '9') {
+      input[index] = key;
+      index++;
+      tft.setTextSize(5);
+      tft.setTextColor(TFT_BLACK);
+      tft.setCursor(310+itvar,260);
+      tft.print(key);
+      itvar += 50;
+    }
+    
+  }
+  }
+}
+
+bool LEDPUZ(){
+
+  // Turn on a random number of LEDs
+  int numLedsOn = random(0,11);
+  for (int i = 0; i < numLeds; i++) {
+    digitalWrite(ledPins[i], i < numLedsOn);
+  }
+  
+  // Wait for 5 seconds
+  delay(5000);
+  
+  // Turn off all LEDs
+  for (int i = 0; i < numLeds; i++) {
+    digitalWrite(ledPins[i], LOW);
+  }
+
+  // Wait for user input
+  String code = "";
+  while (true) {
+    char key = keypad.getKey();
+    if (key == '#') {
+      break;
+    } else if (key == '*') {
+      code = "";
+      tft.fillRect(270,250,200,60,TFT_WHITE);
+      itvar2 = 0;
+    } else if (key) {
+      code += key;
+      tft.setTextSize(5);
+      tft.setTextColor(TFT_BLACK);
+      tft.setCursor(310+itvar2,260);
+      tft.print(key);
+      itvar2 += 50;
+    }
+  }
+
+  // Check code based on number of LEDs on
+  String expectedCode;
+  switch (numLedsOn) {
+    case 3:
+      expectedCode = "A19";
+      break;
+    case 4:
+      expectedCode = "B67";
+      break;
+    case 5:
+      expectedCode = "C03";
+      break;
+    case 6:
+      expectedCode = "D42";
+      break;
+    case 7:
+      expectedCode = "A32";
+      break;
+    case 8:
+      expectedCode = "B44";
+      break;
+    default:
+      expectedCode = "200";
+  }
+  
+  // Check user input
+  if (code == expectedCode) {
+    Serial.println("Code correct!");
+    return ledpuzbool = true;
+  } else {
+    Serial.println("Code incorrect.");
+    return ledpuzbool = false;
+  }
+  }
+
+
