@@ -167,19 +167,35 @@ bool startScreen(){
 }//endstartscreen
 
 void GOODENDSCREEN(){
-  tft.setTextColor(TFT_YELLOW);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(5);
-  tft.setCursor(260,220);
-  tft.print("GOOD JOB");
+      tft.fillScreen(BLACK);
+
+    tft.setCursor(0, 100);
+    tft.setTextColor(BLACK, RED);
+    tft.setTextSize(5);
+    tft.println("YOU WIN!(HOORAY)");
+
+    tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+    tft.setCursor(220, 180);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Home");
+    delay(10000);
 }
 
 void BADENDSCREEN(){
-  tft.setTextColor(TFT_YELLOW);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(5);
-  tft.setCursor(270,220);
-  tft.print("DUMMM");
+ tft.fillScreen(BLACK);
+
+    tft.setCursor(30, 100);
+    tft.setTextColor(BLACK, RED);
+    tft.setTextSize(5);
+    tft.println("YOU LOSE!(OOF)");
+
+    tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+    tft.setCursor(220, 180);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Home");
+    delay (10000);
 }
 
 
@@ -395,5 +411,7 @@ bool LEDPUZ(){
     return ledpuzbool = false;
   }
   }
+
+
 
 
