@@ -23,7 +23,7 @@ const int ledPin8 = A4;
 const int ledPin9 = A5;
 const int ledPin10 = A6;
 
-const int ledPins[] = {ledPin1, ledPin2, ledPin3, ledPin4, ledPin5, ledPin6, ledPin7, ledPin8};
+const int ledPins[] = {ledPin1, ledPin2, ledPin3, ledPin4, ledPin5, ledPin6, ledPin7, ledPin8, ledPin9,ledPin10};
 const int numLeds = sizeof(ledPins) / sizeof(ledPins[0]);
 randomSeed(analogRead(0));
 
