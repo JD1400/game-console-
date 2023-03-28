@@ -25,10 +25,12 @@ bool badEndSetup = true;
 #include LiquidCrystal.h
 
 bool countdown = true;
+int initialCountdown = 15;
 int countdownTime = 15;
 int buzzerpin = 28;
 
-//variables for decodePuzzle
+unsigned long previousMillis = 0;
+const long interval = 1000;
 
 //variables for lightPuzzle
 #include <Keypad.h>
@@ -105,7 +107,12 @@ bool gameScreen = false;
 bool badEndScreen = false;
 bool goodEndScreen = false;
 
-//////////////////////////////////////
+//booleans for solving the puzzles
+bool lightSolve = true;
+bool decodeSolve = false;
+bool arrowSolve = false;
+
+////////////////////////////////////////////////////////////////////////////
 //setup
 void setup(){
   // lcd setup
@@ -140,7 +147,7 @@ void setup(){
   
 }//end setup
 
-//////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 //loop
 void loop(){
   if (startScreen){
@@ -155,7 +162,7 @@ void loop(){
   }
 }//end loop
 
-//////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 //startscreen
 void startScreen(){
   if (setup123){
@@ -188,7 +195,7 @@ void startScreen(){
     tft.println("NOT A BOMB");
     
     setup123 = false;
-  }
+  }//end setup123 if
 
   // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
   float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
@@ -205,24 +212,32 @@ void startScreen(){
   // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
   if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 100 && cursorY <= 150) {
     startScreen = false;
+    selectColour = true;
+    lightSolve = true;
+    decodeSolve = false;
+    arrowSolve = false;
     gameScreen = true;
-    selectColour - true;
   } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
     startScreen = false;
+    selectColour = true;
+    lightSolve = true;
+    decodeSolve = false;
+    arrowSolve = false;
     gameScreen = true;
-    selectColour - true;
   } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 240 && cursorY <= 290) {
     startScreen = false;
+    selectColour = true;
+    lightSolve = true;
+    decodeSolve = false;
+    arrowSolve = false;
     gameScreen = true;
-    selectColour - true;
-  }
-
+  }//end else if
 
   // Finally, draw a pixel where the cursor currently is 
   tft.drawPixel(int(cursorX), int(cursorY), WHITE);
 }//endstartscreen
 
-//////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 //gameScreen
 void gameScreen(){
 
@@ -258,7 +273,7 @@ void gameScreen(){
     for(int i = 0; i < wirenum; i++){
       tft.fillRect(wireXPos, 45, 15, 130, RED);
       wireXPos += 25;
-    }
+    }//end for
     
     tft.setCursor(70,227);
     tft.setTextSize(16);
@@ -322,7 +337,7 @@ void gameScreen(){
       tft.print("BOMB");
       arrowCode[0] = 1;
       arrowCode[1] = 4;
-    }
+    }//end else
     
     //This generates the code the user needs to solve depending on the number of wires
     if (wireNum == 1){
@@ -337,7 +352,7 @@ void gameScreen(){
       arrowCode[2] = 1;
       arrowCode[3] = 1;
       arrowCode[4] = 2;
-    } 
+    }//end else
     
     //This generates the code the user needs to solve depending on the serial number code
     if (randomNum1 == 0 || randomNum2 == 0 || randomNum3 == 0){
@@ -351,15 +366,22 @@ void gameScreen(){
       break;
     } else {
       arrowCode[5] = 4;
-    }
+    }//end else
     
     selectColour = false;
   }//end select colour loop
   
+  if(lightSolve){
+    lightPuzzle();
+  } else if (decodeSolve){
+    SerialnumPuzzle();
+  } else if (arrowSolve){
+    arrowPuzzle();
+  }//end else if
   
 }//end gamescreen
 
-//////////////////////////////////////Done
+////////////////////////////////////////////////////////////////////////////Done
 //badEndScreen
 void badEndScreen(){
   if (badEndSetup){
@@ -402,7 +424,7 @@ void badEndScreen(){
   tft.drawPixel(int(cursorX), int(cursorY), WHITE);
 }//end badEndScreen
 
-//////////////////////////////////////Done
+////////////////////////////////////////////////////////////////////////////Done
 //good end screen
 void goodEndScreen(){
   if (goodEndSetup){
@@ -445,19 +467,23 @@ void goodEndScreen(){
   tft.drawPixel(int(cursorX), int(cursorY), WHITE);
 }//end goodEndScreen
 
-//////////////////////////////////////Done
+////////////////////////////////////////////////////////////////////////////Done
 //COUNTDOWN
 void COUNTDOWN(){  
+  unsigned long currentMiilis = millis();
+
   // print the initial countdown time on the LCD screen
   lcd.print("Countdown: ");
-  lcd.print(countdownTime - 1);
+  lcd.print(initialCountdown);
   lcd.print("s");
   
   // decrease the countdown time by 1 every second
-  while (countdown == true){
-    countdownTime--;
+  if (countdown == true){
     // if the countdown time reaches 0, print "Time's up!" on the LCD screen
     if (countdownTime == 0) {
+      gameScreen = false;
+      badEndScreen = true;
+      badEndSetup = true;
       lcd.clear();
       //digitalWrite(buzzerpin, HIGH);
       lcd.print("Time's up!");
@@ -494,17 +520,20 @@ void COUNTDOWN(){
       countdown = false;
     }
     // otherwise, print the remaining countdown time on the LCD screen
-    else {
-      lcd.setCursor(0, 1);
-      lcd.print("-------");
-      lcd.print(countdownTime);
-      lcd.print("--------");
-      delay(1000);    
-    }end if else
-  }//end while
+    else {  
+      if (currentMillis - previousMillis >= interval){
+        previousMillis = currentMillis;
+        countdownTime -= 1;
+        lcd.setCursor(0, 1);
+        lcd.print("-------");
+        lcd.print(countdownTime);
+        lcd.print("--------");
+      }//end if
+    }//end else
+  }//end outer if
 }//end countdown
 
-//////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 //SerialnumPuzzle
 void SerialnumPuzzle(){
   char key = keypad.getKey();
@@ -546,7 +575,7 @@ void SerialnumPuzzle(){
   }
 }//end decode
 
-//////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 //lightPuzzle
 void lightPuzzle(){
 // Turn on a random number of LEDs
@@ -604,12 +633,14 @@ void lightPuzzle(){
   // Check user input
   if (code == expectedCode) {
     Serial.println("Code correct!");
+    lightSolve = false;
+    decodeSolve = true;
   } else {
     Serial.println("Code incorrect.");
   }
 }//endlightPuzzle
 
-//////////////////////////////////////Done
+////////////////////////////////////////////////////////////////////////////Done
 //arrowPuzzle
 void arrowPuzzle(){
   //This is where the user presses the corresponding buttons to solve the puzzle
@@ -619,15 +650,14 @@ void arrowPuzzle(){
       delay(50);  // debounce delay to filter out button noise
       if (buttonState == LOW) {   // check if button is pressed
         // do something when button is pressed
-      }
-      else {  // button is released
+      } else {  // button is released
         // do something when button is released
         Serial.println("UP"); // print statement to serial monitor
         arrowCodeEnter[arrowCodeIndex] = 1;
         arrowCodeIndex += 1;
-      }
+      }//end else
       lastButtonState = buttonState;  // store the current button state as the last state
-    }
+    }//end if
 
     buttonState2 = digitalRead(buttonPin2);
     if (buttonState2 != lastButtonState2){
@@ -638,9 +668,9 @@ void arrowPuzzle(){
         Serial.println("DOWN");
         arrowCodeEnter[arrowCodeIndex] = 2;
         arrowCodeIndex += 1;
-      }
+      }//end else
       lastButtonState2 = buttonState2;
-    }
+    }//end if
 
     buttonState3 = digitalRead(buttonPin3);
     if (buttonState3 != lastButtonState3){
@@ -651,9 +681,9 @@ void arrowPuzzle(){
         Serial.println("LEFT");
         arrowCodeEnter[arrowCodeIndex] = 3;
         arrowCodeIndex += 1;
-      }
+      }//end else
       lastButtonState3 = buttonState3;
-    }
+    }//end if
 
     buttonState4 = digitalRead(buttonPin4);
     if (buttonState4 != lastButtonState4){
@@ -664,9 +694,9 @@ void arrowPuzzle(){
         Serial.println("RIGHT");
         arrowCodeEnter[arrowCodeIndex] = 4;
         arrowCodeIndex += 1;
-      }
+      }//end else
       lastButtonState4 = buttonState4;
-    }
+    }//end if
   }//to enter the code
 
   if(arrowCodeIndex == 6){
@@ -676,14 +706,16 @@ void arrowPuzzle(){
         break;
       } else if (i == sizeof(arrowCode)-1){
         UPdownPuzzleSolve = true;
-        Serial.println("You solved the puzzle!");
+        arrowSolve = false;
+        gameScreen = false;
+        goodEndScreen = true;
+        goodEndSetup = true;
       }//end else if
     }//end for
   }//end if
-  
 }//endArrowPuzzle
 
-//////////////////////////////////////Done
+////////////////////////////////////////////////////////////////////////////Done
 //wipe arrowCodeEnter
 void wipeArrowCodeEnter(){
   for(int i = 0; i < sizeof(arrowCodeEnter); i++){
