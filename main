@@ -92,7 +92,7 @@ int randomNum3;
 int realNum1;
 int realNum2;
 int realNum3;
-
+int itvar;
 
 //variables for joystick
 #define JOYSTICK_X_PIN A7
@@ -144,6 +144,9 @@ void setup(){
   //pins for joystick
   pinMode(JOYSTICK_BUTTON_PIN, INPUT);
   digitalWrite(JOYSTICK_BUTTON_PIN, HIGH);
+  
+  //iterating variabke for serial num puzzle
+  itvar = 0;
   
 }//end setup
 
@@ -257,13 +260,21 @@ void gameScreen(){
     tft.fillRect(240,210,10,100, TFT_DARKGREY);
     tft.fillRect(50,300,200,10,TFT_DARKGREY);
     
+    tft.drawRect(270,250,200,60,TFT_WHITE);
+    tft.fillRect(270,250,200,60,TFT_WHITE);
+    tft.setTextColor(TFT_YELLOW);
+    tft.setTextSize(3);
+    tft.setCursor(270,220);
+    tft.print("INPUT:");
+    
     randomSeed(analogRead(A15));
     randomNum1 = (random(6));
     randomNum2 = (random(7));
     randomNum3 = (random(7));
 
     wirenum = random(1,4);
-
+    
+    //correct response to serial num puzzle
     realNum1 = (randomNum1 + wirenum);
     realNum2 = (randomNum2 + wirenum);
     realNum3 = (randomNum3 + wirenum);
@@ -553,14 +564,8 @@ void SerialnumPuzzle(){
       int inputNum3 = input[2] - '0';
       if (inputNum1 == realNum1 && inputNum2 == realNum2 && inputNum3 == realNum3) {
         Serial.println("Success!");
-        tft.setTextColor(TFT_YELLOW);
-        tft.setTextSize(2);
-        tft.drawString("CORRECT!!",150,150);
       } else {
         Serial.println("Incorrect input.");
-        tft.setTextColor(TFT_YELLOW);
-        tft.setTextSize(2);
-        tft.drawString("INCORRECT!!",150,150);
       }
       index = 0;
       input[0] = '\0';
@@ -568,9 +573,18 @@ void SerialnumPuzzle(){
       Serial.println("Input cleared.");
       index = 0;
       input[0] = '\0';
+      input[1] = '\0';
+      input[2] = '\0';
+      tft.fillRect(270,250,200,60,TFT_WHITE);
+      itvar = 0;
     } else if (index < 3 && key >= '0' && key <= '9') {
       input[index] = key;
       index++;
+      tft.setTextSize(5);
+      tft.setTextColor(TFT_BLACK);
+      tft.setCursor(310+itvar,260);
+      tft.print(key);
+      itvar += 50;
     }
   }
 }//end decode
