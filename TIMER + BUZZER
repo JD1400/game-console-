@@ -5,7 +5,7 @@ LiquidCrystal lcd(22,23,24,25,26,27); //RS,E,DATA PINS L-R,
 
 // define the countdown time in seconds
 bool countdown = true;
-int countdownTime = 15;
+int countdownTime = 10;
 int buzzerpin = 28;
 
 void setup() {
@@ -16,7 +16,8 @@ void setup() {
 
   // print the initial countdown time on the LCD screen
   lcd.print("Countdown: ");
-  lcd.print(countdownTime);
+  lcd.print(countdownTime - 1);
+  \
   lcd.print("s");
 }
 
@@ -58,12 +59,6 @@ void loop() {
       delay(750);
       lcd.setCursor(0,1);
       lcd.print("       :(");
-      delay(750);
-      lcd.setCursor(0,1);
-      lcd.print("                  ");
-      delay(750);
-      lcd.setCursor(0,1);
-      lcd.print("       :(");
       delay(3000);
       lcd.clear();
       countdown = false;
@@ -78,3 +73,4 @@ void loop() {
     }
   }
 }
+  
