@@ -1,0 +1,890 @@
+#include <TFT_eSPI.h>
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(22,23,24,25,26,27); //RS,E,DATA PINS L-R,
+
+//create the screen variable from the library
+TFT_eSPI tft = TFT_eSPI();
+
+//NOTES
+#define NOTE_B0  31
+#define NOTE_C1  33
+#define NOTE_CS1 35
+#define NOTE_D1  37
+#define NOTE_DS1 39
+#define NOTE_E1  41
+#define NOTE_F1  44
+#define NOTE_FS1 46
+#define NOTE_G1  49
+#define NOTE_GS1 52
+#define NOTE_A1  55
+#define NOTE_AS1 58
+#define NOTE_B1  62
+#define NOTE_C2  65
+#define NOTE_CS2 69
+#define NOTE_D2  73
+#define NOTE_DS2 78
+#define NOTE_E2  82
+#define NOTE_F2  87
+#define NOTE_FS2 93
+#define NOTE_G2  98
+#define NOTE_GS2 104
+#define NOTE_A2  110
+#define NOTE_AS2 117
+#define NOTE_B2  123
+#define NOTE_C3  131
+#define NOTE_CS3 139
+#define NOTE_D3  147
+#define NOTE_DS3 156
+#define NOTE_E3  165
+#define NOTE_F3  175
+#define NOTE_FS3 185
+#define NOTE_G3  196
+#define NOTE_GS3 208
+#define NOTE_A3  220
+#define NOTE_AS3 233
+#define NOTE_B3  247
+#define NOTE_C4  262
+#define NOTE_CS4 277
+#define NOTE_D4  294
+#define NOTE_DS4 311
+#define NOTE_E4  330
+#define NOTE_F4  349
+#define NOTE_FS4 370
+#define NOTE_G4  392
+#define NOTE_GS4 415
+#define NOTE_A4  440
+#define NOTE_AS4 466
+#define NOTE_B4  494
+#define NOTE_C5  523
+#define NOTE_CS5 554
+#define NOTE_D5  587
+#define NOTE_DS5 622
+#define NOTE_E5  659
+#define NOTE_F5  698
+#define NOTE_FS5 740
+#define NOTE_G5  784
+#define NOTE_GS5 831
+#define NOTE_A5  880
+#define NOTE_AS5 932
+#define NOTE_B5  988
+#define NOTE_C6  1047
+#define NOTE_CS6 1109
+#define NOTE_D6  1175
+#define NOTE_DS6 1245
+#define NOTE_E6  1319
+#define NOTE_F6  1397
+#define NOTE_FS6 1480
+#define NOTE_G6  1568
+#define NOTE_GS6 1661
+#define NOTE_A6  1760
+#define NOTE_AS6 1865
+#define NOTE_B6  1976
+#define NOTE_C7  2093
+#define NOTE_CS7 2217
+#define NOTE_D7  2349
+#define NOTE_DS7 2489
+#define NOTE_E7  2637
+#define NOTE_F7  2794
+#define NOTE_FS7 2960
+#define NOTE_G7  3136
+#define NOTE_GS7 3322
+#define NOTE_A7  3520
+#define NOTE_AS7 3729
+#define NOTE_B7  3951
+#define NOTE_C8  4186
+#define NOTE_CS8 4435
+#define NOTE_D8  4699
+#define NOTE_DS8 4978
+int buzzerPin = 28;
+int buzztime = 10;
+
+// Define colours in 4-digit hex                                  
+#define BLACK 0x0000
+#define BLUE 0x001F
+
+#define RED 0xF800
+#define GREEN 0x07E0
+#define CYAN 0x07FF
+#define MAGENTA 0xF81F
+#define YELLOW 0xFFE0
+#define WHITE 0xFFFF
+
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+int wirenum;
+int randomNum1;
+int randomNum2;
+int randomNum3;
+int realNum1;
+int realNum2;
+int realNum3;
+int wirecolornum;
+int itvar;
+int itvar2;
+char wirecolor;
+const int ledPin1 = 10;
+const int ledPin2 = 11;
+const int ledPin3 = 12;
+const int ledPin4 = 13;
+const int ledPin5 = A1;
+const int ledPin6 = A2;
+const int ledPin7 = A3;
+const int ledPin8 = A4;
+const int ledPin9 = A5;
+const int ledPin10 = A6;
+const int ledPins[] = {ledPin1, ledPin2, ledPin3, ledPin4, ledPin5, ledPin6, ledPin7, ledPin8,ledPin9,ledPin10};
+const int numLeds = sizeof(ledPins) / sizeof(ledPins[0]);
+
+bool sernumpuzbool = true;
+bool ledpuzbool = true;
+bool iter;
+bool startScreenbool = false;
+bool arrpuzbool = true;
+
+//variables for joystick
+#define JOYSTICK_X_PIN A7
+#define JOYSTICK_Y_PIN A8
+#define JOYSTICK_BUTTON_PIN 34
+float cursorX = 240.0;
+float cursorY = 160.0;
+
+//variables for arrowPuzzle
+bool UPdownPuzzleSolve = false;
+int randomNumber;
+int arrowCode[6]; //UP == 1, DOWN == 2, LEFT == 3, RIGHT == 4
+int arrowCodeEnter[6];
+int arrowCodeIndex = 0;
+int buttonPin = 38;  //up   // the number of the button pin
+int buttonPin2 = 39;//down
+int buttonPin3 = 40;//left
+int buttonPin4 = 41;//right
+int buttonState = 0;   // current state of the button
+int buttonState2 = 0;
+int buttonState3 = 0;
+int buttonState4 = 0;
+int lastButtonState = 0;  // previous state of the button
+int lastButtonState2 = 0;
+int lastButtonState3 = 0;
+int lastButtonState4 = 0;
+bool arrowStartReset = true;
+char charRep[6];
+int itvar3;
+bool goodEndSetup = true;
+bool badEndSetup = true;
+bool badScreenbool = false;
+bool goodScreenbool = false;
+
+void setup() {
+  Serial.begin(9600);
+
+  //screen variables
+  tft.begin();
+  tft.setRotation(1);
+  
+  //lcd variables
+  lcd.begin(16, 2);
+
+  itvar = 0;
+  itvar2 = 0;
+  itvar3 = 0;
+  iter = true;
+   // Set up LED pins as outputs
+  for (int i = 0; i < numLeds; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
+
+  //pins for sound output
+  pinMode(buzzerPin, OUTPUT);
+
+  tone(buzzerPin, 500, 2000);
+  
+  //joystick pins
+  pinMode(JOYSTICK_BUTTON_PIN, INPUT);
+  digitalWrite(JOYSTICK_BUTTON_PIN, HIGH );
+}
+
+bool startScreen(){
+
+  while (true){
+  // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
+  float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
+  float JoyStickY = map(analogRead(JOYSTICK_Y_PIN), 0, 1023, -1000, 1000)/20000.0;
+
+  // Update cursor position
+  cursorY = cursorY + JoyStickY;
+  cursorX = cursorX + JoyStickX;
+
+  // Limit the cursor to the bounds of the screen
+  cursorX = constrain(cursorX, 0,480);
+  cursorY = constrain(cursorY, 0,320);
+
+  // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
+  if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 100 && cursorY <= 150) {
+    INPUTSOUND();
+    return startScreenbool = true;
+    break;
+  } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
+    INPUTSOUND();
+    return startScreenbool = true;
+    break;
+  } else if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 240 && cursorY <= 290) {
+    INPUTSOUND();
+    return startScreenbool = true;
+    break;
+  }//end else if
+
+  // Finally, draw a pixel where the cursor currently is 
+  tft.drawPixel(int(cursorX), int(cursorY), WHITE);
+  }
+}//endstartscreen
+
+bool GOODENDSCREEN(){
+  while(true){
+    if (goodEndSetup){
+      tft.fillScreen(BLACK);
+
+      tft.setCursor(0, 100);
+      tft.setTextColor(BLACK, RED);
+      tft.setTextSize(5);
+      tft.println("YOU WIN!(HOORAY)");
+
+      tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+      tft.setCursor(220, 180);
+      tft.setTextColor(RED);
+      tft.setTextSize(3);
+      tft.println("Home");
+
+      goodEndSetup = false;
+    }//end goodEndsetup
+
+    // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
+    float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
+    float JoyStickY = map(analogRead(JOYSTICK_Y_PIN), 0, 1023, -1000, 1000)/20000.0;
+
+    // Update cursor position
+    cursorY = cursorY + JoyStickY;
+    cursorX = cursorX + JoyStickX;
+
+    // Limit the cursor to the bounds of the screen
+    cursorX = constrain(cursorX, 0,480);
+    cursorY = constrain(cursorY, 0,320);
+
+    // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
+    if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
+      INPUTSOUND();
+      goodEndSetup = true;
+      startScreenbool = false;
+      return goodScreenbool = true;
+      break;
+    }//end if
+
+    // Finally, draw a pixel where the cursor currently is 
+    tft.drawPixel(int(cursorX), int(cursorY), WHITE);
+  }
+}
+
+bool BADENDSCREEN(){
+  while(true){
+    if (badEndSetup){
+      tft.fillScreen(BLACK);
+
+      tft.setCursor(30, 100);
+      tft.setTextColor(BLACK, RED);
+      tft.setTextSize(5);
+      tft.println("YOU LOSE!(OOF)");
+
+      tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+      tft.setCursor(220, 180);
+      tft.setTextColor(RED);
+      tft.setTextSize(3);
+      tft.println("Home");
+
+      badEndSetup = false;
+    }
+
+    // Read input and map change the range from 0 - 1023 to -0.05 to 0.05. map() only creates integers. 
+    float JoyStickX = map(analogRead(JOYSTICK_X_PIN), 0, 1023, -1000, 1000)/20000.0;
+    float JoyStickY = map(analogRead(JOYSTICK_Y_PIN), 0, 1023, -1000, 1000)/20000.0;
+
+    // Update cursor position
+    cursorY = cursorY + JoyStickY;
+    cursorX = cursorX + JoyStickX;
+
+    // Limit the cursor to the bounds of the screen
+    cursorX = constrain(cursorX, 0,480);
+    cursorY = constrain(cursorY, 0,320);
+
+    // Read the pin for the button in the joystick, and if pressed add one to resetCount. Otherwise, reset it to 0.
+    if (digitalRead(JOYSTICK_BUTTON_PIN) == 0 && cursorX >= 150 && cursorX <= 350 && cursorY >= 170 && cursorY <= 220) {
+      INPUTSOUND();
+      badEndSetup = true;
+      startScreenbool = false;
+      return badScreenbool = true;
+      break;
+    } 
+  
+    // Finally, draw a pixel where the cursor currently is 
+    tft.drawPixel(int(cursorX), int(cursorY), WHITE);
+  }
+}
+
+
+void loop() {
+    tft.fillScreen(BLACK);
+
+    //Easy button
+    tft.drawRoundRect(150, 100, 200, 50, 5, WHITE);
+    tft.setCursor(220, 115);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Easy");
+
+    //Medium button
+    tft.drawRoundRect(150, 170, 200, 50, 5, WHITE);
+    tft.setCursor(205, 185);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Medium");
+
+    //Hard button
+    tft.drawRoundRect(150, 240, 200, 50, 5, WHITE);
+    tft.setCursor(215, 255);
+    tft.setTextColor(RED);
+    tft.setTextSize(3);
+    tft.println("Hard");
+
+    tft.setCursor(30, 20);
+    tft.setTextColor(BLACK, RED);
+    tft.setTextSize(10);
+    tft.println("NOT A BOMB");
+
+    
+
+  while (true){
+
+    startScreen();
+    if (startScreenbool == true){
+      break;
+    }    
+  }
+
+  arrowCodeIndex = 0;
+
+  STARTUPSOUND();
+  lcd.setCursor(0,0);
+  lcd.print("SOLVE: SERIAL");
+  lcd.setCursor(0,1);
+  lcd.print("PUZZLE");
+  SERNUMPUZ();
+  if (sernumpuzbool==true){
+    WINSOUND();
+    tft.fillRect(270,250,200,60,TFT_WHITE);
+    tft.fillCircle(175,30,15,GREEN);
+    LEDPUZ();
+    if (ledpuzbool==true){  
+      WINSOUND();
+      tft.fillCircle(175,75,15,GREEN);
+      ARROWPUZ();
+      if (arrpuzbool == true){
+        tft.fillCircle(175,110,15,GREEN);
+        while(true){
+          WINSOUND();
+          GOODENDSCREEN(); 
+          if(goodScreenbool){
+            break;
+          }    
+        }   
+      } else {
+        LOSESOUND();
+        BADENDSCREEN();
+        while(true){
+          if(badScreenbool){
+            break;
+          }  
+        }
+      }
+    } else {
+      LOSESOUND();
+      BADENDSCREEN();
+      while(true){
+        if(badScreenbool){
+          break;
+        }  
+      }
+    }
+  } else {
+    LOSESOUND();
+    BADENDSCREEN();
+    while(true){
+      if(badScreenbool){
+        break;
+      }  
+    }
+  }
+
+}
+
+
+bool SERNUMPUZ(){
+
+  randomSeed(analogRead(A10));
+  randomNum1 = (random(6));
+  randomNum2 = (random(7));
+  randomNum3 = (random(7));
+  wirenum = random(1,4);
+
+  realNum1 = (randomNum1 + wirenum);
+  realNum2 = (randomNum2 + wirenum);
+  realNum3 = (randomNum3 + wirenum);
+
+  tft.fillScreen(BLACK);
+
+  tft.drawRect(50,25,100,25,TFT_WHITE);
+  tft.fillRect(50,25,100,25,TFT_WHITE);
+
+  tft.drawRect(50,170,100,25,TFT_WHITE);
+  tft.fillRect(50,170,100,25,TFT_WHITE);
+
+  tft.drawRect(50,210,200,100,TFT_DARKGREY);
+  tft.fillRect(50,210,10,100, TFT_DARKGREY);
+  tft.fillRect(50,210,200,10,TFT_DARKGREY);
+  tft.fillRect(240,210,10,100, TFT_DARKGREY);
+  tft.fillRect(50,300,200,10,TFT_DARKGREY);
+  tft.drawRect(270,250,200,60,TFT_WHITE);
+  tft.fillRect(270,250,200,60,TFT_WHITE);
+  tft.setTextColor(TFT_YELLOW);
+  tft.setTextSize(3);
+  tft.setCursor(270,220);
+  tft.print("INPUT:");
+  tft.setTextColor(TFT_WHITE);
+  tft.setCursor(70,227);
+  tft.setTextSize(16);
+  tft.print(randomNum1);
+  tft.setCursor(125,227);
+  tft.print(randomNum2);
+  tft.setCursor(180,227);
+  tft.print(randomNum3);
+
+  randomSeed(analogRead(A15));
+  randomNumber = random(0,6);//selects a random number and depending on the one chosen, a colour for the
+                               //button is selected.
+
+  //if statement that creates the button and generates the corresponding code
+  if(randomNumber == 0){
+    tft.fillCircle(350, 110, 100, RED);
+    tft.setCursor(270, 90);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(10);
+    tft.print("BOMB");
+    arrowCode[0] = 3;
+    arrowCode[1] = 4;
+  } else if (randomNumber == 1){
+    tft.fillCircle(350, 110, 100, YELLOW);
+    tft.setCursor(270, 90);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(10);
+    tft.print("BOMB");
+    arrowCode[0] = 1;
+    arrowCode[1] = 2;
+  } else if (randomNumber == 2){
+    tft.fillCircle(350, 110, 100, BLUE);
+    tft.setCursor(270, 90);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(10);
+    tft.print("BOMB");
+    arrowCode[0] = 4;
+    arrowCode[1] = 3;
+  } else if (randomNumber == 3){
+    tft.fillCircle(350, 110, 100, GREEN);
+    tft.setCursor(270, 90);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(10);
+    tft.print("BOMB");
+    arrowCode[0] = 2;
+    arrowCode[1] = 1;
+  } else if (randomNumber == 4){
+    tft.fillCircle(350, 110, 100, MAGENTA);
+    tft.setCursor(270, 90);
+    tft.setTextColor(WHITE);
+    tft.setTextSize(10);
+    tft.print("BOMB");
+    arrowCode[0] = 2;
+    arrowCode[1] = 3;
+  } else {
+    tft.fillCircle(350, 110, 100, WHITE);
+    tft.setCursor(270, 90);
+    tft.setTextColor(BLACK);
+    tft.setTextSize(10);
+    tft.print("BOMB");
+    arrowCode[0] = 1;
+    arrowCode[1] = 4;
+  }//end else
+
+  int wireXPos = 67;
+  for(int i = 0; i < wirenum; i++){
+    tft.fillRect(wireXPos, 45, 15, 130, RED);
+    wireXPos += 25;
+  }
+  
+  while (iter){
+  char key = keypad.getKey();
+  static int index = 0;
+  static char input[3];
+
+  if (key) {
+    if (key == '#') {
+      INPUTSOUND();
+      if (input[0] == '0' && index == 1) {
+        Serial.println("Invalid input");
+        index = 0;
+        input[0] = '\0';
+        return;
+      }
+      int inputNum1 = input[0] - '0';
+      int inputNum2 = input[1] - '0';
+      int inputNum3 = input[2] - '0';
+      if (inputNum1 == realNum1 && inputNum2 == realNum2 && inputNum3 == realNum3) {
+        Serial.println("Success!");
+        return sernumpuzbool = true;
+        break;
+      } else {
+        Serial.println("Incorrect input.");
+        return sernumpuzbool = false;
+        break;
+        tft.setTextColor(TFT_YELLOW);
+        tft.setTextSize(2);
+        tft.drawString("INCORRECT!!",150,150);
+      }
+      index = 0;
+      input[0] = '\0';
+    } else if (key == '*') {
+      INPUTSOUND();
+      Serial.println("Input cleared.");
+      index = 0;
+      input[0] = '\0';
+      input[1] = '\0';
+      input[2] = '\0';
+      tft.fillRect(270,250,200,60,TFT_WHITE);
+      itvar = 0;
+    } else if (index < 3 && key >= '0' && key <= '9') {
+      INPUTSOUND();
+      input[index] = key;
+      index++;
+      tft.setTextSize(5);
+      tft.setTextColor(TFT_BLACK);
+      tft.setCursor(310+itvar,260);
+      tft.print(key);
+      itvar += 50;
+    }
+    
+  }
+  }
+}
+
+bool LEDPUZ(){
+  lcd.setCursor(0,0);
+  lcd.print("SOLVE: LED PUZZLE");
+  // Turn on a random number of LEDs
+  randomSeed(analogRead(A15));
+  int numLedsOn = random(0,11);
+  for (int i = 0; i < numLeds; i++) {
+    digitalWrite(ledPins[i], i < numLedsOn);
+  }
+  
+  // Wait for 5 seconds
+  delay(5000);
+  
+  // Turn off all LEDs
+  for (int i = 0; i < numLeds; i++) {
+    digitalWrite(ledPins[i], LOW);
+  }
+
+  // Wait for user input
+  String code = "";
+  while (true) {
+    char key = keypad.getKey();
+    if (key == '#') {
+      INPUTSOUND();
+      break;
+    } else if (key == '*') {
+      INPUTSOUND();
+      code = "";
+      tft.fillRect(270,250,200,60,TFT_WHITE);
+      itvar2 = 0;
+    } else if (key) {
+      INPUTSOUND();
+      code += key;
+      tft.setTextSize(5);
+      tft.setTextColor(TFT_BLACK);
+      tft.setCursor(310+itvar2,260);
+      tft.print(key);
+      itvar2 += 50;
+    }
+  }
+
+  // Check code based on number of LEDs on
+  String expectedCode;
+  switch (numLedsOn) {
+    case 3:
+      expectedCode = "A19";
+      break;
+    case 4:
+      expectedCode = "B67";
+      break;
+    case 5:
+      expectedCode = "C03";
+      break;
+    case 6:
+      expectedCode = "D42";
+      break;
+    case 7:
+      expectedCode = "A32";
+      break;
+    case 8:
+      expectedCode = "B44";
+      break;
+    default:
+      expectedCode = "200";
+  }
+  
+  // Check user input
+  if (code == expectedCode) {
+    Serial.println("Code correct!");
+    return ledpuzbool = true;
+  } else {
+    Serial.println("Code incorrect.");
+    return ledpuzbool = false;
+  }
+}
+
+bool ARROWPUZ(){
+  tft.fillRect(270,250,200,60,TFT_WHITE);
+
+  if (wirenum == 1){
+    arrowCode[2] = 3;
+    arrowCode[3] = 3;
+    arrowCode[4] = 1;
+  } else if (wirenum == 2){
+    arrowCode[2] = 4;
+    arrowCode[3] = 3;
+    arrowCode[4] = 2;
+  } else {
+    arrowCode[2] = 1;
+    arrowCode[3] = 1;
+    arrowCode[4] = 2;
+  }//end else
+
+  if (randomNum1 == 0 || randomNum2 == 0 || randomNum3 == 0){
+    arrowCode[5] = 3;
+  } else if (randomNum1 == 3 || randomNum2 == 3 || randomNum3 == 3){
+    arrowCode[5] = 2;
+  } else if (randomNum1 == 6 || randomNum2 == 6 || randomNum3 == 6){
+    arrowCode[5] = 1;
+  } else {
+    arrowCode[5] = 4;
+  }//end else
+
+  Serial.println("THE CODE:");
+  Serial.print(arrowCode[0]);
+  Serial.print(arrowCode[1]);
+  Serial.print(arrowCode[2]);
+  Serial.print(arrowCode[3]);
+  Serial.print(arrowCode[4]);
+  Serial.print(arrowCode[5]);
+  Serial.println();
+
+  while(true){
+  //pressing the buttons and such
+    if (arrowCodeIndex < 6){
+      buttonState = digitalRead(buttonPin);  // read the state of the button
+      if (buttonState != lastButtonState) {  // check if button state has changed
+        delay(50);  // debounce delay to filter out button noise
+        INPUTSOUND();
+        if (buttonState == LOW) {   // check if button is pressed
+          // do something when button is pressed
+        } else {  // button is released
+          // do something when button is released
+          arrowCodeEnter[arrowCodeIndex] = 1;
+          arrowCodeIndex += 1;
+          tft.setTextSize(5);
+          tft.setTextColor(TFT_BLACK);
+          tft.setCursor(275+itvar3,260);
+          tft.print("U");
+          itvar3 += 30;
+          Serial.println("Current array index: ");
+          Serial.println(arrowCodeIndex);
+        }//end else
+        lastButtonState = buttonState;  // store the current button state as the last state
+      }//end if
+
+      buttonState2 = digitalRead(buttonPin2);
+      if (buttonState2 != lastButtonState2){
+        delay(50);
+        INPUTSOUND();
+        if (buttonState2 == LOW){
+
+        } else {
+          arrowCodeEnter[arrowCodeIndex] = 2;
+          arrowCodeIndex += 1;
+          tft.setTextSize(5);
+          tft.setTextColor(TFT_BLACK);
+          tft.setCursor(275+itvar3,260);
+          tft.print("D");
+          itvar3 += 30;
+          Serial.println("Current array index: ");
+          Serial.println(arrowCodeIndex);
+        }//end else
+        lastButtonState2 = buttonState2;
+      }//end if
+
+      buttonState3 = digitalRead(buttonPin3);
+      if (buttonState3 != lastButtonState3){        
+        delay(50);
+        INPUTSOUND();
+        if (buttonState3 == LOW){
+
+        } else {
+          arrowCodeEnter[arrowCodeIndex] = 3;
+          arrowCodeIndex += 1;
+          tft.setTextSize(5);
+          tft.setTextColor(TFT_BLACK);
+          tft.setCursor(275+itvar3,260);
+          tft.print("L");
+          itvar3 += 30;
+          Serial.println("Current array index: ");
+          Serial.println(arrowCodeIndex);
+        }//end else
+        lastButtonState3 = buttonState3;
+      }//end if
+
+      buttonState4 = digitalRead(buttonPin4);
+      if (buttonState4 != lastButtonState4){
+        delay(50);
+        INPUTSOUND();
+        if (buttonState4 == LOW){
+
+        } else {
+          arrowCodeEnter[arrowCodeIndex] = 4;
+          arrowCodeIndex += 1;
+          tft.setTextSize(5);
+          tft.setTextColor(TFT_BLACK);
+          tft.setCursor(275+itvar3,260);
+          tft.print("R");
+          itvar3 += 30;
+          Serial.println("Current array index: ");
+          Serial.println(arrowCodeIndex);
+        }//end else
+        lastButtonState4 = buttonState4;
+      }//end if
+
+    } else {
+      for(int i = 0; i < sizeof(arrowCode); i++){
+        if(arrowCode[i] != arrowCodeEnter[i]){
+          Serial.println("ENTERED CODE:");
+          Serial.print(arrowCodeEnter[0]);
+          Serial.print(arrowCodeEnter[1]);
+          Serial.print(arrowCodeEnter[2]);
+          Serial.print(arrowCodeEnter[3]);
+          Serial.print(arrowCodeEnter[4]);
+          Serial.print(arrowCodeEnter[5]);
+          Serial.println();
+          clearArray();
+          itvar3 = 0;
+          return arrpuzbool = false;
+          break;
+        } else if (i == 5){
+          Serial.println("ENTERED CODE:");
+          Serial.print(arrowCodeEnter[0]);
+          Serial.print(arrowCodeEnter[1]);
+          Serial.print(arrowCodeEnter[2]);
+          Serial.print(arrowCodeEnter[3]);
+          Serial.print(arrowCodeEnter[4]);
+          Serial.print(arrowCodeEnter[5]);
+          Serial.println();
+          clearArray();
+          itvar3 = 0;
+          return arrpuzbool = true;
+          break;
+        }//end else if
+      }//end for
+    }//end else
+
+    if (arrowStartReset){
+      clearArray();
+      tft.fillRect(270,250,200,60,TFT_WHITE);
+      itvar3 = 0;
+      arrowStartReset = false;
+    }//end debug thing
+
+  }//end while
+}//end arrowPuzz
+
+//clear array function
+void clearArray(){
+  for(int i = 0; i < sizeof(arrowCodeEnter); i++){
+    arrowCodeEnter[i] == 0;
+  }
+  arrowCodeIndex = 0;
+}
+
+//start sound function
+void STARTUPSOUND(){
+  tone(buzzerPin, NOTE_C4,10*buzztime);
+  delay(100);
+
+  tone(buzzerPin, NOTE_C4,10*buzztime);
+  delay(100);
+
+  tone(buzzerPin, NOTE_C4,10*buzztime);
+  delay(100);
+
+  tone(buzzerPin, NOTE_G4,10*buzztime); 
+  delay(100);
+
+  tone(buzzerPin, NOTE_A4,10*buzztime); 
+  delay(100);
+
+  tone(buzzerPin, NOTE_B4,10*buzztime); 
+  delay(100);
+
+  noTone(buzzerPin);
+}//end STARTUP
+
+void INPUTSOUND(){
+  tone(buzzerPin, NOTE_C4,10*buzztime);
+  delay(2*buzztime);
+  tone(buzzerPin, NOTE_A4,10*buzztime);  
+}//end INPUTSOUND
+
+void WINSOUND(){
+  tone(buzzerPin, NOTE_C4,10*buzztime);
+  delay(30*buzztime);
+  tone(buzzerPin, NOTE_C4,10*buzztime);
+  delay(30*buzztime);
+  tone(buzzerPin, NOTE_E4,20*buzztime);
+  delay(30*buzztime);
+  tone(buzzerPin, NOTE_A4,50*buzztime);
+}//WINSOUND
+
+void LOSESOUND(){
+  tone(buzzerPin, NOTE_E4,15*buzztime);
+  delay(30*buzztime);
+  tone(buzzerPin, NOTE_E4,15*buzztime);
+  delay(30*buzztime);
+  tone(buzzerPin, NOTE_D4,25*buzztime);
+  delay(30*buzztime);
+  tone(buzzerPin, NOTE_C3,90*buzztime);
+  delay(30*buzztime);
+}//end LOSESOUND
