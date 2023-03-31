@@ -116,6 +116,10 @@ void setup() {
   
   //lcd variables
   lcd.begin(16, 2);
+  LiquidCrystal lcd(22,23,24,25,26,27);
+  bool countdown = true;
+  int countdownTime = 10;
+  int buzzerpin = 28;
 
   itvar = 0;
   itvar2 = 0;
